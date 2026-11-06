@@ -1,9 +1,13 @@
 const express = require('express');
 const app = express();
-const port = 3000;
+const partidos = require('./data/partidos.json');
 
 // Middleware básico
 app.use(express.json());
+
+app.get('/api/partidos', (req, res) => {
+  res.json(partidos);
+});
 
 app.get('/api/', (req, res) => {
   res.send('Hello World!');
