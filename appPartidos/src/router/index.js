@@ -1,8 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import AdminView from '@/views/AdminView.vue'
+import CalendarView from '@/views/CalendarView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [],
+  routes: [
+    { path: '/', name: 'calendar', component: CalendarView },
+    { path: '/admin', name: 'admin', component: AdminView },
+  ],
 })
 
 export default router
