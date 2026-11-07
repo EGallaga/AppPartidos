@@ -6,14 +6,16 @@
       "horario": "09:00",
       "lugar": "Iparralde",
       "casa": true,
+      "acude": true,
       "resultado": "0-6"
     },
     {
       "deporte": "waterpolo",
       "fecha": "2026-11-08",
-      "horario": "10:45",
+      "horario": "10:30",
       "lugar": "Sestao",
       "casa": false,
+      "acude": false,
       "resultado": ""
     }
   ]

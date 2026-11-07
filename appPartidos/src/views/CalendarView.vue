@@ -4,6 +4,13 @@ import { getPartidos } from '@/services/partidos'
 
 const START_DATE = '2026-11-01'
 const END_DATE = '2027-06-30'
+const sportClasses = {
+  futbol: 'sport-pill--futbol',
+  baloncesto: 'sport-pill--baloncesto',
+  waterpolo: 'sport-pill--waterpolo',
+  'waterpolo infantil': 'sport-pill--waterpolo-infantil',
+  'baile moderno': 'sport-pill--baile-moderno',
+}
 const partidos = ref([])
 const loading = ref(true)
 const error = ref('')
@@ -94,6 +101,10 @@ function formatSport(sport) {
   return sport.replace(/\b\p{L}/gu, (letter) => letter.toLocaleUpperCase('es-ES'))
 }
 
+function sportClass(sport) {
+  return sportClasses[sport] || ''
+}
+
 function elementRef(element, index) {
   if (element) weekendElements.value[index] = element
 }
@@ -172,10 +183,13 @@ onMounted(async () => {
                 v-for="(partido, matchIndex) in day.partidos"
                 :key="`${partido.deporte}-${partido.fecha}-${partido.horario}`"
                 class="match-card"
+                :class="{ 'match-card--no-asistencia': partido.acude === false }"
                 :style="{ '--match-index': matchIndex }"
               >
                 <div class="match-card__topline">
-                  <span class="sport-pill">{{ formatSport(partido.deporte) }}</span>
+                  <span class="sport-pill" :class="sportClass(partido.deporte)">
+                    {{ formatSport(partido.deporte) }}
+                  </span>
                   <span
                     class="venue-icon"
                     :title="partido.casa ? 'En casa' : 'Fuera de casa'"
@@ -383,6 +397,11 @@ onMounted(async () => {
   animation-delay: calc(var(--match-index) * 40ms);
 }
 
+.match-card--no-asistencia {
+  border-color: #f2d5d2;
+  background: #fff7f6;
+}
+
 .match-card__topline {
   display: flex;
   align-items: center;
@@ -401,6 +420,31 @@ onMounted(async () => {
   font-weight: 750;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.sport-pill--futbol {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.sport-pill--baloncesto {
+  color: #9a3412;
+  background: #ffedd5;
+}
+
+.sport-pill--waterpolo {
+  color: #075985;
+  background: #e0f2fe;
+}
+
+.sport-pill--waterpolo-infantil {
+  color: #1e3a8a;
+  background: #dbeafe;
+}
+
+.sport-pill--baile-moderno {
+  color: #6b21a8;
+  background: #f3e8ff;
 }
 
 .venue-icon {
