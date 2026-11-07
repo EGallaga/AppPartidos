@@ -13,12 +13,14 @@ const form = reactive({
   horario: '',
   lugar: '',
   casa: true,
+  acude: true,
   resultado: '',
 })
 const deleteForm = reactive({ deporte: sports[0], fecha: todayIso })
 const loading = ref(true)
 const saving = ref(false)
 const deleting = ref(false)
+const editing = ref(false)
 const partidos = ref([])
 const error = ref('')
 const message = ref('')
@@ -39,12 +41,27 @@ async function submitPartido() {
     form.horario = ''
     form.lugar = ''
     form.resultado = ''
+    form.acude = true
+    editing.value = false
     await refreshPartidos()
   } catch (requestError) {
     error.value = requestError.message
   } finally {
     saving.value = false
   }
+}
+
+function editPartido(partido) {
+  Object.assign(form, partido, { acude: partido.acude !== false })
+  editing.value = true
+}
+
+function cancelEdit() {
+  editing.value = false
+  form.horario = ''
+  form.lugar = ''
+  form.resultado = ''
+  form.acude = true
 }
 
 async function submitDelete() {
@@ -96,15 +113,18 @@ onMounted(async () => {
         <div class="panel-heading">
           <span class="panel-icon" aria-hidden="true">＋</span>
           <div>
-            <h2>Nuevo partido</h2>
-            <p>Si ya existe el mismo deporte, fecha y hora, se actualizará.</p>
+            <h2>{{ editing ? 'Editar partido' : 'Nuevo partido' }}</h2>
+            <p v-if="editing">
+              Deporte y fecha identifican el partido y no se pueden modificar aquí.
+            </p>
+            <p v-else>Si ya existe el mismo deporte y fecha, se actualizará.</p>
           </div>
         </div>
 
         <form class="admin-form" @submit.prevent="submitPartido">
           <label>
             <span class="field-label">Deporte</span>
-            <select v-model="form.deporte" class="field-control" required>
+            <select v-model="form.deporte" class="field-control" :disabled="editing" required>
               <option v-for="sport in sports" :key="sport" :value="sport">{{ sport }}</option>
             </select>
           </label>
@@ -112,11 +132,22 @@ onMounted(async () => {
           <div class="form-row">
             <label>
               <span class="field-label">Fecha</span>
-              <input v-model="form.fecha" class="field-control" type="date" required />
+              <input
+                v-model="form.fecha"
+                class="field-control"
+                type="date"
+                :disabled="editing"
+                required
+              />
             </label>
             <label>
               <span class="field-label">Hora de inicio</span>
-              <input v-model="form.horario" class="field-control" type="time" required />
+              <input
+                v-model="form.horario"
+                class="field-control"
+                type="time"
+                required
+              />
             </label>
           </div>
 
@@ -138,6 +169,12 @@ onMounted(async () => {
             <span>Partido en casa</span>
           </label>
 
+          <label class="checkbox-row">
+            <input v-model="form.acude" type="checkbox" />
+            <span class="checkbox-custom" aria-hidden="true"></span>
+            <span>Acude al partido</span>
+          </label>
+
           <label>
             <span class="field-label">Resultado <span class="optional">(opcional)</span></span>
             <input
@@ -149,10 +186,21 @@ onMounted(async () => {
             />
           </label>
 
-          <button class="primary-button submit-button" type="submit" :disabled="saving">
-            {{ saving ? 'Guardando…' : 'Guardar partido' }}
-            <span aria-hidden="true">→</span>
-          </button>
+          <div class="form-actions">
+            <button class="primary-button submit-button" type="submit" :disabled="saving">
+              {{ saving ? 'Guardando…' : editing ? 'Guardar cambios' : 'Guardar partido' }}
+              <span aria-hidden="true">→</span>
+            </button>
+            <button
+              v-if="editing"
+              class="cancel-button"
+              type="button"
+              :disabled="saving"
+              @click="cancelEdit"
+            >
+              Cancelar
+            </button>
+          </div>
         </form>
       </section>
 
@@ -191,12 +239,17 @@ onMounted(async () => {
           <p v-if="loading" class="panel-empty">Cargando partidos…</p>
           <p v-else-if="!partidos.length" class="panel-empty">Todavía no hay partidos.</p>
           <ul v-else class="loaded-list">
-            <li v-for="partido in partidos" :key="`${partido.fecha}-${partido.horario}-${partido.deporte}`">
+            <li v-for="partido in partidos" :key="`${partido.fecha}-${partido.deporte}`">
               <div>
                 <strong>{{ partido.deporte }}</strong>
                 <span>{{ partido.fecha }} · {{ partido.horario }}</span>
               </div>
-              <span class="loaded-place">{{ partido.lugar }}</span>
+              <div class="loaded-actions">
+                <span class="loaded-place">{{ partido.lugar }}</span>
+                <button class="edit-button" type="button" @click="editPartido(partido)">
+                  Editar
+                </button>
+              </div>
             </li>
           </ul>
         </section>
@@ -340,9 +393,36 @@ onMounted(async () => {
   outline: 3px solid rgb(49 91 232 / 22%);
 }
 
+.form-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 3px;
+}
+
 .submit-button {
   width: 100%;
-  margin-top: 3px;
+}
+
+.cancel-button,
+.edit-button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid #dce3ed;
+  border-radius: 9px;
+  color: #526078;
+  background: white;
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.cancel-button:hover:not(:disabled),
+.edit-button:hover {
+  background: #f5f7fa;
+}
+
+.cancel-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
 }
 
 .side-column {
@@ -438,6 +518,12 @@ onMounted(async () => {
   color: #5f6c81;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.loaded-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .admin-note {

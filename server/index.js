@@ -26,6 +26,7 @@ function normalizePartido(partido) {
     horario: String(partido.horario || partido.hora || '').trim(),
     lugar: String(partido.lugar || '').trim(),
     casa: partido.casa,
+    acude: partido.acude !== false,
     resultado: String(partido.resultado || '').trim(),
   }
 }
@@ -108,6 +109,9 @@ function validatePartido(input) {
     return 'El lugar es obligatorio y no puede superar 120 caracteres.'
   }
   if (typeof input.casa !== 'boolean') return 'Indica si el partido es en casa o fuera.'
+  if (input.acude !== undefined && typeof input.acude !== 'boolean') {
+    return 'Indica si se acude al partido.'
+  }
   if (partido.resultado.length > 40) return 'El resultado no puede superar 40 caracteres.'
   return null
 }
@@ -136,10 +140,7 @@ app.post('/api/partidos', async (req, res, next) => {
     const partido = normalizePartido(req.body)
     const data = await readData()
     const existingIndex = data.partidos.findIndex(
-      (item) =>
-        item.deporte === partido.deporte &&
-        item.fecha === partido.fecha &&
-        item.horario === partido.horario,
+      (item) => item.deporte === partido.deporte && item.fecha === partido.fecha,
     )
     const updated = existingIndex !== -1
     if (updated) data.partidos[existingIndex] = partido

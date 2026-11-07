@@ -35,8 +35,13 @@ al enviar el formulario, se guardará la información en el JSON general para la
 
 
 ## Requisito 5:
-Al guardar un partido si ya existe un partido para esa fecha y hora del mismo deporte, se actualiza con la información nueva, no se crea un nuevo partido.
+Solo puede haber un partido por deporte y fecha. Al guardar un partido que ya existe para esa combinación, se actualiza con la información nueva, incluida la hora, no se crea uno nuevo.
 
 ## Requisito 6:
 En el formulario habrá una opción para una vez seleccionado deporte y fecha, poder borrar los partidos cargados para ese deporte en esa fecha.
 
+## Requistio 7:
+A cada partido se ha añadido un atributo nuevo: acude. Es un boolean que por defecto estará a true. Este atributo será modificable mediante el formulario de edicion o creación de partidos. A la hora de mostrar los partidos en el calendario, en caso de que el partido tenga el atributo acude a false, el partido ese se mostrara con un fondo ligeramente rojo. En caso de estar a true, se deja como hasta ahora el partido.
+
+## Requisito 8:
+La etiqueta con el titulo del deporte en la vista del calendario de debe de mostrar con un color diferente para cada deporte. la relación es la siguiente: Futbol -> verde, balocesto -> naranja, waterpolo -> azul claro, waterpolo infantil -> azul oscuro, baile moderno -> morado.
