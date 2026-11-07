@@ -50,16 +50,27 @@ async function readLocalData() {
 }
 
 async function readBlobData() {
-  const { list } = await import('@vercel/blob')
-  const { blobs } = await list({ prefix: BLOB_PATH })
-  const blob = blobs.find((item) => item.pathname === BLOB_PATH)
+  const { get } = await import('@vercel/blob')
+  const blob = await get(BLOB_PATH, { access: 'private', useCache: false })
   if (!blob) return readLocalData()
 
-  const response = await fetch(blob.url, { cache: 'no-store' })
-  if (!response.ok) {
-    throw new Error(`No se pudo leer el archivo de partidos en Blob (${response.status}).`)
+  if (blob.statusCode !== 200 || !blob.stream) {
+    throw new Error(`No se pudo leer el archivo de partidos en Blob (${blob.statusCode}).`)
   }
-  return normalizeData(await response.json())
+
+  const reader = blob.stream.getReader()
+  const chunks = []
+  try {
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      chunks.push(value)
+    }
+  } finally {
+    reader.releaseLock()
+  }
+
+  return normalizeData(JSON.parse(Buffer.concat(chunks).toString('utf8')))
 }
 
 async function readData() {
@@ -71,7 +82,7 @@ async function writeData(data) {
   if (usesBlobStorage()) {
     const { put } = await import('@vercel/blob')
     await put(BLOB_PATH, JSON.stringify(normalized, null, 2), {
-      access: 'public',
+      access: 'private',
       addRandomSuffix: false,
       allowOverwrite: true,
       cacheControlMaxAge: 60,
