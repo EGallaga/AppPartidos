@@ -36,8 +36,8 @@ Vite reenvía las peticiones `/api` a Express en `http://localhost:3001`. En loc
 
 ## Despliegue en Vercel
 
-El archivo `vercel.json` compila `appPartidos/` como sitio estático y `server/index.js` como función Node. Conecta un almacén **Vercel Blob** al proyecto para que Vercel configure el acceso de lectura y escritura (OIDC/`BLOB_STORE_ID`); fuera de Vercel puedes configurar `BLOB_READ_WRITE_TOKEN` para usar el mismo almacenamiento. En producción, la API falla explícitamente si Blob no está configurado: no intenta escribir en el sistema de archivos efímero.
+El archivo `vercel.json` compila `appPartidos/` como sitio estático y `server/index.js` como función Node. Conecta un almacén **Vercel Blob privado** al proyecto para que Vercel configure el acceso de lectura y escritura (OIDC/`BLOB_STORE_ID`); fuera de Vercel puedes configurar `BLOB_READ_WRITE_TOKEN` para usar el mismo almacenamiento. En producción, la API falla explícitamente si Blob no está configurado: no intenta escribir en el sistema de archivos efímero.
 
-Los partidos se guardan como `app-partidos/partidos.json` en Blob. El JSON local existente sirve como contenido inicial cuando todavía no se ha creado ese blob.
+Los partidos se guardan como `app-partidos/partidos.json` en Blob. La API lee y escribe el archivo con el SDK autenticado de Vercel Blob y `access: 'private'`. El JSON local existente sirve como contenido inicial cuando todavía no se ha creado ese blob.
 
 > `/admin` no está enlazada desde el calendario, pero la ruta por sí sola no autentica al administrador. Antes de usar datos reales en un sitio público, protege las operaciones de escritura con autenticación.
