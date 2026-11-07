@@ -1,25 +1,35 @@
 {
- "version": 2,
- "installCommand": "npm install --legacy-peer-deps",
- "builds": [
- {
- "src": "server/index.js",
- "use": "@vercel/node"
- },
- {
- "src": "appPartidos/package.json",
- "use": "@vercel/static-build",
- "config": { "distDir": "dist" }
- }
- ],
- "routes": [
- {
- "src": "/api/(.*)",
- "dest": "server/index.js"
- },
- {
- "src": "/(.*)",
- "dest": "appPartidos/$1"
- }
- ]
+  "version": 2,
+  "installCommand": "npm install --prefix appPartidos --legacy-peer-deps && npm install --prefix server --legacy-peer-deps",
+  "builds": [
+    {
+      "src": "server/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "appPartidos/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server/index.js"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "appPartidos/assets/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "appPartidos/favicon.ico"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "appPartidos/index.html"
+    }
+  ]
 }
