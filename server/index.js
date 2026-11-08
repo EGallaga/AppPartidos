@@ -24,6 +24,7 @@ function normalizePartido(partido) {
     deporte: String(partido.deporte || '').trim().toLocaleLowerCase('es-ES'),
     fecha: String(partido.fecha || '').trim(),
     horario: String(partido.horario || partido.hora || '').trim(),
+    rival: String(partido.rival || '').trim(),
     lugar: String(partido.lugar || '').trim(),
     casa: partido.casa,
     acude: partido.acude !== false,
@@ -105,6 +106,7 @@ function validatePartido(input) {
   if (partido.horario && !/^([01]\d|2[0-3]):[0-5]\d$/.test(partido.horario)) {
     return 'La hora debe tener el formato HH:mm.'
   }
+  if (partido.rival.length > 120) return 'El rival no puede superar 120 caracteres.'
   if (!partido.lugar || partido.lugar.length > 120) {
     return 'El lugar es obligatorio y no puede superar 120 caracteres.'
   }
