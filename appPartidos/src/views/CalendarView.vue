@@ -200,7 +200,7 @@ onMounted(async () => {
                 </div>
                 <p class="match-card__time">
                   <span class="clock-icon" aria-hidden="true">◷</span>
-                  {{ partido.horario }}
+                  {{ partido.horario || 'Hora pendiente' }}
                 </p>
                 <p class="match-card__place">{{ partido.lugar }}</p>
                 <p v-if="partido.resultado" class="match-card__result">

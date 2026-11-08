@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { deletePartidos, getPartidos, savePartido } from '@/services/partidos'
 
 const sports = ['futbol', 'baloncesto', 'waterpolo', 'waterpolo infantil', 'baile moderno']
@@ -22,6 +22,9 @@ const saving = ref(false)
 const deleting = ref(false)
 const editing = ref(false)
 const partidos = ref([])
+const partidosActualesYFuturos = computed(() =>
+  partidos.value.filter((partido) => partido.fecha >= todayIso),
+)
 const error = ref('')
 const message = ref('')
 
@@ -141,12 +144,11 @@ onMounted(async () => {
               />
             </label>
             <label>
-              <span class="field-label">Hora de inicio</span>
+              <span class="field-label">Hora de inicio <span class="optional">(opcional)</span></span>
               <input
                 v-model="form.horario"
                 class="field-control"
                 type="time"
-                required
               />
             </label>
           </div>
@@ -234,15 +236,20 @@ onMounted(async () => {
         <section class="matches-panel">
           <div class="matches-panel__heading">
             <h2>Partidos cargados</h2>
-            <span>{{ partidos.length }}</span>
+            <span>{{ partidosActualesYFuturos.length }}</span>
           </div>
           <p v-if="loading" class="panel-empty">Cargando partidos…</p>
-          <p v-else-if="!partidos.length" class="panel-empty">Todavía no hay partidos.</p>
+          <p v-else-if="!partidosActualesYFuturos.length" class="panel-empty">
+            No hay partidos con fecha actual o futura.
+          </p>
           <ul v-else class="loaded-list">
-            <li v-for="partido in partidos" :key="`${partido.fecha}-${partido.deporte}`">
+            <li
+              v-for="partido in partidosActualesYFuturos"
+              :key="`${partido.fecha}-${partido.deporte}`"
+            >
               <div>
                 <strong>{{ partido.deporte }}</strong>
-                <span>{{ partido.fecha }} · {{ partido.horario }}</span>
+                <span>{{ partido.fecha }} · {{ partido.horario || 'Hora pendiente' }}</span>
               </div>
               <div class="loaded-actions">
                 <span class="loaded-place">{{ partido.lugar }}</span>

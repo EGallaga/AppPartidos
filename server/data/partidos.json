@@ -16,6 +16,24 @@
       "lugar": "Sestao",
       "casa": false,
       "acude": false,
+      "resultado": "14-14"
+    },
+    {
+      "deporte": "futbol",
+      "fecha": "2026-11-14",
+      "horario": "10:30",
+      "lugar": "La Salle",
+      "casa": false,
+      "acude": true,
+      "resultado": ""
+    },
+    {
+      "deporte": "waterpolo infantil",
+      "fecha": "2026-11-15",
+      "horario": "12:00",
+      "lugar": "Sestao",
+      "casa": false,
+      "acude": true,
       "resultado": ""
     }
   ]
