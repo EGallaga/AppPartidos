@@ -102,7 +102,7 @@ function validatePartido(input) {
   const partido = normalizePartido(input)
   if (!SPORTS.has(partido.deporte)) return 'Selecciona un deporte válido.'
   if (!isValidDate(partido.fecha)) return 'La fecha no es válida.'
-  if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(partido.horario)) {
+  if (partido.horario && !/^([01]\d|2[0-3]):[0-5]\d$/.test(partido.horario)) {
     return 'La hora debe tener el formato HH:mm.'
   }
   if (!partido.lugar || partido.lugar.length > 120) {
