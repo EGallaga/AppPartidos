@@ -11,6 +11,7 @@ const form = reactive({
   deporte: sports[0],
   fecha: todayIso,
   horario: '',
+  rival: '',
   lugar: '',
   casa: true,
   acude: true,
@@ -42,6 +43,7 @@ async function submitPartido() {
     const response = await savePartido({ ...form })
     message.value = response.message
     form.horario = ''
+    form.rival = ''
     form.lugar = ''
     form.resultado = ''
     form.acude = true
@@ -62,6 +64,7 @@ function editPartido(partido) {
 function cancelEdit() {
   editing.value = false
   form.horario = ''
+  form.rival = ''
   form.lugar = ''
   form.resultado = ''
   form.acude = true
@@ -152,6 +155,17 @@ onMounted(async () => {
               />
             </label>
           </div>
+
+          <label>
+            <span class="field-label">Rival <span class="optional">(opcional)</span></span>
+            <input
+              v-model.trim="form.rival"
+              class="field-control"
+              type="text"
+              maxlength="120"
+              placeholder="Nombre del equipo rival"
+            />
+          </label>
 
           <label>
             <span class="field-label">Lugar</span>

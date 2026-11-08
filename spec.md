@@ -45,3 +45,6 @@ A cada partido se ha añadido un atributo nuevo: acude. Es un boolean que por de
 
 ## Requisito 8:
 La etiqueta con el titulo del deporte en la vista del calendario de debe de mostrar con un color diferente para cada deporte. la relación es la siguiente: Futbol -> verde, balocesto -> naranja, waterpolo -> azul claro, waterpolo infantil -> azul oscuro, baile moderno -> morado.
+
+## Requisito 9:
+Se ha incluido un atributo en los partidos: rival. Es el equipo rival del partido. No es un dato obligatorio a la hora de cargar o editar el partido, pero tiene que aparecer el campo en el formulario. En el calendario debe de aparecer el nombre junto a la hora, ambos datos separados por un "vs". En el formulario, el campo para informar el rival debe de aparecer encima del lugar.
