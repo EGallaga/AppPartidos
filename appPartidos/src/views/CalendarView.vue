@@ -32,11 +32,16 @@ function dateFromIso(date) {
   return new Date(`${date}T12:00:00`)
 }
 
+function getFridayOfWeek(date) {
+  const friday = new Date(date)
+  friday.setUTCDate(friday.getUTCDate() - ((friday.getUTCDay() + 6) % 7) + 4)
+  return friday
+}
+
 function getWeekends() {
   const start = new Date(`${START_DATE}T00:00:00Z`)
   const end = new Date(`${END_DATE}T00:00:00Z`)
-  const firstFriday = new Date(start)
-  firstFriday.setUTCDate(firstFriday.getUTCDate() - ((firstFriday.getUTCDay() + 2) % 7))
+  const firstFriday = getFridayOfWeek(start)
 
   const weekends = []
   for (const friday = new Date(firstFriday); friday <= end; friday.setUTCDate(friday.getUTCDate() + 7)) {
@@ -83,9 +88,7 @@ const currentWeekendId = computed(() => {
   const today = toIsoDate(new Date())
   if (today < START_DATE || today > END_DATE) return weekends.value[0]?.id
 
-  const date = new Date(`${today}T00:00:00Z`)
-  date.setUTCDate(date.getUTCDate() - ((date.getUTCDay() + 2) % 7))
-  return toIsoDate(date)
+  return toIsoDate(getFridayOfWeek(new Date(`${today}T00:00:00Z`)))
 })
 
 function formatWeekday(date) {
